@@ -14,24 +14,31 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.google.android.libraries.maps.MapView;
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     private static final int REQUEST_CODE = 73;
     private LocationManager mLocationManager;
+    private MapView map;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        map = findViewById(R.id.map);
+        if(ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             accessLocation();
         }
         else{
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_CODE);
             }
             else{
-                Toast.makeText(this, "Unable to get location permissions.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,
+                        "Unable to get location permissions.", Toast.LENGTH_SHORT).show();
             }
         }
     }
