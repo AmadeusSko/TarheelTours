@@ -14,14 +14,14 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.libraries.maps.GoogleMap;
 import com.google.android.libraries.maps.MapView;
 import com.google.android.libraries.maps.OnMapReadyCallback;
 import com.google.android.libraries.maps.model.LatLng;
 import com.google.android.libraries.maps.model.MarkerOptions;
 
-public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback,
+        PopupDialog.Listener, InfoDialog.InfoListener {
 
     private static final int REQUEST_CODE = 73;
     private LocationManager mLocationManager;
@@ -58,18 +58,31 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             startActivity(intent);
         }
         try {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000,1,this);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    1000,1,this);
 
         } catch(SecurityException e){
             e.printStackTrace();
-            Toast.makeText(this, "Unable to get location updates.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to get location updates.",
+                    Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void makeDialog(Location location){
+        String locationName = location.getProvider();
+        PopupDialog dialog = new PopupDialog(locationName);
+        dialog.show(getSupportFragmentManager(), "Alert");
+    }
+
+    public void makeDialog(String info, String title){
+        InfoDialog dialog = new InfoDialog(info, title);
+        dialog.show(getSupportFragmentManager(), "Info");
     }
 
     @Override
     public void onLocationChanged(Location location) {
         if(oldWellLocation.distanceTo(location) <= 10){
-            //Add Method fro displaying information
+            makeDialog(oldWellLocation);
 
         }
 
@@ -94,10 +107,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         LatLng oldWell = new LatLng(35.9121, 35.9121);
-        oldWellLocation = new Location("");
+        oldWellLocation = new Location("Old Well");
         oldWellLocation.setLatitude(35.9121);
         oldWellLocation.setLongitude(35.9121);
         map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
+    }
+
+    @Override
+    public void onAcceptedListener() {
+        String info = ""; // Get info from database
+        String title = ""; // Get title of location from database
+        makeDialog(info, title);
+    }
+
+    @Override
+    public void onCancelledListener() {
+
+    }
+
+    @Override
+    public void infoCancelledListener() {
 
     }
 }
