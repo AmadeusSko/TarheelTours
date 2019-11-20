@@ -14,19 +14,28 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.libraries.maps.GoogleMap;
 import com.google.android.libraries.maps.MapView;
+import com.google.android.libraries.maps.OnMapReadyCallback;
+import com.google.android.libraries.maps.model.LatLng;
+import com.google.android.libraries.maps.model.MarkerOptions;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback {
 
     private static final int REQUEST_CODE = 73;
     private LocationManager mLocationManager;
-    private MapView map;
+    private MapView mapView;
+    private GoogleMap map;
+    private Location oldWellLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        map = findViewById(R.id.map);
+        mapView = findViewById(R.id.map);
+        mapView.getMapAsync(this);
+        mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             accessLocation();
@@ -59,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
+        if(oldWellLocation.distanceTo(location) <= 10){
+            //Add Method fro displaying information
+
+        }
 
     }
 
@@ -74,6 +87,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onProviderDisabled(String s) {
+
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+        LatLng oldWell = new LatLng(35.9121, 35.9121);
+        oldWellLocation = new Location("");
+        oldWellLocation.setLatitude(35.9121);
+        oldWellLocation.setLongitude(35.9121);
+        map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
 
     }
 }
