@@ -2,6 +2,7 @@ package com.compteam.tarheeltours;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -14,9 +15,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -26,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private static final int REQUEST_CODE = 73;
     private LocationManager mLocationManager;
-    private MapView mapView;
     private GoogleMap map;
     private Location oldWellLocation;
 
@@ -34,8 +35,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mapView = findViewById(R.id.map);
-        mapView.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
         mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
         if(ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -124,11 +126,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onMapReady(com.google.android.gms.maps.GoogleMap googleMap) {
-
+        map = googleMap;
         LatLng oldWell = new LatLng(35.9121, 35.9121);
         oldWellLocation = new Location("Old Well");
         oldWellLocation.setLatitude(35.9121);
         oldWellLocation.setLongitude(35.9121);
         map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(oldWell));
+
     }
 }
