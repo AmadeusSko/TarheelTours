@@ -14,11 +14,12 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
-import com.google.android.libraries.maps.GoogleMap;
-import com.google.android.libraries.maps.MapView;
-import com.google.android.libraries.maps.OnMapReadyCallback;
-import com.google.android.libraries.maps.model.LatLng;
-import com.google.android.libraries.maps.model.MarkerOptions;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback,
         PopupDialog.Listener, InfoDialog.InfoListener {
@@ -103,15 +104,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        LatLng oldWell = new LatLng(35.9121, 35.9121);
-        oldWellLocation = new Location("Old Well");
-        oldWellLocation.setLatitude(35.9121);
-        oldWellLocation.setLongitude(35.9121);
-        map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
-    }
 
     @Override
     public void onAcceptedListener() {
@@ -128,5 +120,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @Override
     public void infoCancelledListener() {
 
+    }
+
+    @Override
+    public void onMapReady(com.google.android.gms.maps.GoogleMap googleMap) {
+
+        LatLng oldWell = new LatLng(35.9121, 35.9121);
+        oldWellLocation = new Location("Old Well");
+        oldWellLocation.setLatitude(35.9121);
+        oldWellLocation.setLongitude(35.9121);
+        map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
+        map.
     }
 }
