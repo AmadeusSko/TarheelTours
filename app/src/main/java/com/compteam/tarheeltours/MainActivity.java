@@ -130,6 +130,5 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         oldWellLocation.setLatitude(35.9121);
         oldWellLocation.setLongitude(35.9121);
         map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
-        map.
     }
 }
