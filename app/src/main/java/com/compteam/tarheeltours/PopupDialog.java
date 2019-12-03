@@ -48,6 +48,7 @@ public class PopupDialog extends DialogFragment implements DialogInterface.OnCli
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
                 Toast.makeText(getContext(), "Displaying info!", Toast.LENGTH_SHORT).show();
+                mListener.onAcceptedListener();
                 break;
 
             case DialogInterface.BUTTON_NEGATIVE:

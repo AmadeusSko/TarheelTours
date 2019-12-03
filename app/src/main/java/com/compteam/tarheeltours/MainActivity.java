@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private LocationManager mLocationManager;
     private GoogleMap map;
     private Location oldWellLocation;
-    private int standardZoom = 17;
+    private int standardZoom = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         dialog.show(getSupportFragmentManager(), "Alert");
     }
 
-    public void makeDialog(String info, String title){
+    public void makeInfoDialog(String info, String title){
         InfoDialog dialog = new InfoDialog(info, title);
         dialog.show(getSupportFragmentManager(), "Info");
     }
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onAcceptedListener() {
         String info = ""; // Get info from database
         String title = ""; // Get title of location from database
-        makeDialog(info, title);
+        makeInfoDialog(info, title);
     }
 
     @Override
@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         LatLng oldWell = new LatLng(35.9121, -79.0512);
         oldWellLocation = new Location("Old Well");
         oldWellLocation.setLatitude(35.9121);
-        oldWellLocation.setLongitude(35.9121);
+        oldWellLocation.setLongitude(-79.0512);
         map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
+        map.moveCamera(CameraUpdateFactory.zoomTo(17));
         map.moveCamera(CameraUpdateFactory.newLatLng(oldWell));
-        map.setMinZoomPreference(standardZoom);
 
     }
 }
