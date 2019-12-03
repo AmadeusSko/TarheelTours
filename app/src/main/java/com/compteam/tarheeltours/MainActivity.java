@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private LocationManager mLocationManager;
     private GoogleMap map;
     private Location oldWellLocation;
+    private int standardZoom = 17;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,12 +128,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @Override
     public void onMapReady(com.google.android.gms.maps.GoogleMap googleMap) {
         map = googleMap;
-        LatLng oldWell = new LatLng(35.9121, 35.9121);
+        LatLng oldWell = new LatLng(35.9121, -79.0512);
         oldWellLocation = new Location("Old Well");
         oldWellLocation.setLatitude(35.9121);
         oldWellLocation.setLongitude(35.9121);
         map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
         map.moveCamera(CameraUpdateFactory.newLatLng(oldWell));
+        map.setMinZoomPreference(standardZoom);
 
     }
 }
