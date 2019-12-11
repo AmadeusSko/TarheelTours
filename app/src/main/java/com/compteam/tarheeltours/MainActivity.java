@@ -23,6 +23,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -42,11 +43,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onCreate(savedInstanceState);
         SQLHelper = new SQLHelper(this);
         if (initiate) {
-            ContentValues oldWell = new ContentValues();
-            oldWell.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME, "Old Well");
-            oldWell.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO, R.string.old_well_info);
+            ContentValues theOldWell = new ContentValues();
+            theOldWell.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME, "The Old Well");
+            theOldWell.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO, R.string.old_well_info);
+            ContentValues sitterson = new ContentValues();
+            sitterson.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME, "Sitterson Hall");
+            sitterson.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO, R.string.sitterson_info);
+            ContentValues fedex = new ContentValues();
+            fedex.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME, "FedEx Global Center");
+            fedex.put(LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO, R.string.fedex_info);
             SQLiteDatabase db = SQLHelper.getWritableDatabase();
-            db.insert(LandmarkInformation.LandmarkTable.TABLE_NAME, null, oldWell);
+            db.insert(LandmarkInformation.LandmarkTable.TABLE_NAME, null, theOldWell);
             initiate = false;
         }
         setContentView(R.layout.activity_main);
@@ -179,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @Override
     public void onMapReady(com.google.android.gms.maps.GoogleMap googleMap) {
         Toast.makeText(this, "onMapReady running", Toast.LENGTH_SHORT).show();
+        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(), R.raw.map_style));
         LatLng oldWell = new LatLng(35.9121, 35.9121);
         oldWellLocation = new Location("Old Well");
         oldWellLocation.setLatitude(35.9121);
