@@ -57,6 +57,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     static final String DOME_INFO = "The Dean E. Smith Student Activities Center is a mouthful to say - and so is often shortened to the Dean Dome. It is a massive hub of student energy during college basketball season since its construction was completed in 1986, with a recent renovation in 2018. A top tip: draw as many paths as you can from the Dean Dome to Franklin Street, and still you will not be able to come up with all the ways that students sprint from the Dome all the way to Franklin Street after a home victory against Duke or a National Champtionship win. The energy at the Dean Dome during basketball season is simply electrifying.";
 
 
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        mLocationManager.removeUpdates(this);
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+//                    REQUEST_CODE);
+//        } else {
+//            Toast.makeText(this,
+//                    "Unable to get location permissions.", Toast.LENGTH_SHORT).show();
+//        }    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -183,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         try {
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    1000, 1, this);
+                    5000, 1, this);
 
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -223,22 +240,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @Override
     public void onLocationChanged(Location location) {
         LatLng n = new LatLng(location.getLatitude(), location.getLongitude());
+        map.moveCamera(CameraUpdateFactory.zoomTo(17));
+        map.moveCamera(CameraUpdateFactory.newLatLng(n));
         for(MarkerOptions loc: locations){
             Location loc1 = new Location(loc.getTitle());
             loc1.setLatitude(loc.getPosition().latitude);
             loc1.setLongitude(loc.getPosition().longitude);
-            if (loc1.distanceTo(location) <= 50) {
+            float dist = loc1.distanceTo(location);
+            if (dist <= 50.0) {
+                Toast.makeText(this, "Distance to " + loc.getTitle() + ": " + dist, Toast.LENGTH_SHORT).show();
                 if(!hasDialoge(loc.getTitle())) {
                     currentLocation = loc.getTitle();
-                    new Searcher().execute();
                     makeDialog(loc.getTitle());
+                    new Searcher().execute();
                     setLastLocation(loc.getTitle());
                     break;
                 }
             }
         }
-        map.moveCamera(CameraUpdateFactory.zoomTo(17));
-        map.moveCamera(CameraUpdateFactory.newLatLng(n));
+
 
     }
 
@@ -313,10 +333,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         map.addMarker(kessing);
 
         LatLng wilson = new LatLng(35.909855, -79.049939);
+        //LatLng wilson  = new LatLng(35.914015, -79.047813);
         MarkerOptions wilsonLib = addMarker("Wilson Library", wilson);
         map.addMarker(wilsonLib);
 
         LatLng south = new LatLng(35.911624, -79.050912);
+        //LatLng south  = new LatLng(35.914015, -79.047813);
         MarkerOptions SBLD = addMarker("South Building", south);
         map.addMarker(SBLD);
 
@@ -346,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         @Override
         protected String doInBackground(Void... voids) {
             db = SQLHelper.getWritableDatabase();
-            String sql = "SELECT " + LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO + " FROM " + LandmarkInformation.LandmarkTable.TABLE_NAME + " WHERE " + LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME + " = " + "\"Davis Library\"" + ";";
+            String sql = "SELECT " + LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_INFO + " FROM " + LandmarkInformation.LandmarkTable.TABLE_NAME + " WHERE " + LandmarkInformation.LandmarkTable.COLUMN_LANDMARK_NAME + " = " + "\"" + currentLocation + "\"" + ";";
             Cursor result = db.rawQuery(sql, null);
             String answer = "NO RESULT FROM DATABASE SEARCH";
             try{
@@ -356,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 e.printStackTrace();
                 Log.d("SKOZ BOI", e.toString());
             }
-
+            result.close();
             return answer;
         }
     }
