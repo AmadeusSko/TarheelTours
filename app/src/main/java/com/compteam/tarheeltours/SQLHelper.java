@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 
 public class SQLHelper extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
     private static final String NAME = "landmarks.db";
 
     public SQLHelper(@Nullable Context context){

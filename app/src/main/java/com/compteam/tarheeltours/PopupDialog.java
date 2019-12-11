@@ -12,9 +12,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 public class PopupDialog extends DialogFragment implements DialogInterface.OnClickListener {
-    private String location;
+    private String mlocation;
     public PopupDialog(String location){
-        location = location;
+        mlocation = location;
     }
     public interface Listener{
         void onAcceptedListener(String location);
@@ -39,7 +39,7 @@ public class PopupDialog extends DialogFragment implements DialogInterface.OnCli
         builder.setPositiveButton("Want more info?", this);
         builder.setNegativeButton("Cancel", this);
         builder.setTitle("Approaching a new location!");
-        builder.setMessage("Now approaching: "+ location);
+        builder.setMessage("Now approaching: "+ mlocation);
         return builder.create();
     }
 
@@ -48,7 +48,7 @@ public class PopupDialog extends DialogFragment implements DialogInterface.OnCli
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
                 Toast.makeText(getContext(), "Displaying info!", Toast.LENGTH_SHORT).show();
-                mListener.onAcceptedListener(location);
+                mListener.onAcceptedListener(mlocation);
                 break;
 
             case DialogInterface.BUTTON_NEGATIVE:
