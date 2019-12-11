@@ -20,7 +20,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback,
@@ -29,66 +32,80 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private static final int REQUEST_CODE = 73;
     private LocationManager mLocationManager;
     private GoogleMap map;
+    private Location start;
     private Location oldWellLocation;
-    private int standardZoom = 20;
+    private int standardZoom = 17;
+    private MarkerOptions[] locations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        start = oldWellLocation = new Location("Old Well");
+        oldWellLocation.setLatitude(35.9121);
+        oldWellLocation.setLongitude(-79.0512);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        mLocationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-        if(ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             accessLocation();
-        }
-        else{
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         REQUEST_CODE);
-            }
-            else{
+            } else {
                 Toast.makeText(this,
                         "Unable to get location permissions.", Toast.LENGTH_SHORT).show();
             }
         }
+        mapFragment.getMapAsync(this);
     }
 
-    private void accessLocation(){
-        if(!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+    private void accessLocation() {
+        if (!mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivity(intent);
         }
         try {
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    1000,1,this);
+                    1000, 1, this);
+            //start = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        } catch(SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
             Toast.makeText(this, "Unable to get location updates.",
                     Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void makeDialog(Location location){
+    public void makeDialog(Location location) {
         String locationName = location.getProvider();
         PopupDialog dialog = new PopupDialog(locationName);
         dialog.show(getSupportFragmentManager(), "Alert");
     }
 
-    public void makeInfoDialog(String info, String title){
+    public void makeInfoDialog(String loaction) {
+        String info = "";
+        String title = "";
         InfoDialog dialog = new InfoDialog(info, title);
         dialog.show(getSupportFragmentManager(), "Info");
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        if(oldWellLocation.distanceTo(location) <= 10){
-            makeDialog(oldWellLocation);
-
+        LatLng n = new LatLng(location.getLatitude(), location.getLongitude());
+        for(MarkerOptions loc: locations){
+            Location loc1 = new Location(loc.getTitle());
+            loc1.setLatitude(loc.getPosition().latitude);
+            loc1.setLongitude(loc.getPosition().longitude);
+            if (loc1.distanceTo(location) <= 10) {
+                makeDialog(oldWellLocation);
+                break;
+            }
         }
+        map.moveCamera(CameraUpdateFactory.zoomTo(17));
+        map.moveCamera(CameraUpdateFactory.newLatLng(n));
 
     }
 
@@ -109,10 +126,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
 
     @Override
-    public void onAcceptedListener() {
-        String info = ""; // Get info from database
-        String title = ""; // Get title of location from database
-        makeInfoDialog(info, title);
+    public void onAcceptedListener(String location) {
+        makeInfoDialog(location);
     }
 
     @Override
@@ -125,16 +140,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     }
 
+    public MarkerOptions addMarker(String title, LatLng coord){
+        MarkerOptions options = new MarkerOptions().position(coord).title(title);
+        return options;
+    }
+
     @Override
     public void onMapReady(com.google.android.gms.maps.GoogleMap googleMap) {
         map = googleMap;
+                map.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(),
+                R.raw.mapstyle));
         LatLng oldWell = new LatLng(35.9121, -79.0512);
-        oldWellLocation = new Location("Old Well");
-        oldWellLocation.setLatitude(35.9121);
-        oldWellLocation.setLongitude(-79.0512);
-        map.addMarker(new MarkerOptions().position(oldWell).title("The Old Well"));
+        MarkerOptions well = addMarker("The Old Well", oldWell);
+        map.addMarker(well);
+        locations = new MarkerOptions[]{well};
         map.moveCamera(CameraUpdateFactory.zoomTo(17));
-        map.moveCamera(CameraUpdateFactory.newLatLng(oldWell));
+        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(start.getLatitude(),
+                start.getLongitude())));
 
     }
 }
