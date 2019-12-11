@@ -85,9 +85,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         dialog.show(getSupportFragmentManager(), "Alert");
     }
 
-    public void makeInfoDialog(String loaction) {
+    public void makeInfoDialog(String location) {
         String info = "";
-        String title = "";
+        String title = location;
         InfoDialog dialog = new InfoDialog(info, title);
         dialog.show(getSupportFragmentManager(), "Info");
     }
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             loc1.setLatitude(loc.getPosition().latitude);
             loc1.setLongitude(loc.getPosition().longitude);
             if (loc1.distanceTo(location) <= 10) {
-                makeDialog(oldWellLocation);
+                makeDialog(loc1);
                 break;
             }
         }
