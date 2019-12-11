@@ -17,7 +17,7 @@ public class PopupDialog extends DialogFragment implements DialogInterface.OnCli
         location = location;
     }
     public interface Listener{
-        void onAcceptedListener();
+        void onAcceptedListener(String location);
         void onCancelledListener();
     }
 
@@ -48,7 +48,7 @@ public class PopupDialog extends DialogFragment implements DialogInterface.OnCli
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
                 Toast.makeText(getContext(), "Displaying info!", Toast.LENGTH_SHORT).show();
-                mListener.onAcceptedListener();
+                mListener.onAcceptedListener(location);
                 break;
 
             case DialogInterface.BUTTON_NEGATIVE:
