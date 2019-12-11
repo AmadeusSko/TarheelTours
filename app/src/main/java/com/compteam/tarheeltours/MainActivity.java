@@ -5,33 +5,27 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.ContentValues;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.util.Log;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener, OnMapReadyCallback,
@@ -42,9 +36,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private GoogleMap map;
     private Location start;
     private Location oldWellLocation;
-    private int standardZoom = 17;
     private MarkerOptions[] locations;
-    private int standardZoom = 20;
     SQLHelper SQLHelper;
     boolean initiate = true;
 
@@ -149,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
+        Toast.makeText(this, "Change received", Toast.LENGTH_SHORT).show();
         LatLng n = new LatLng(location.getLatitude(), location.getLongitude());
         for(MarkerOptions loc: locations){
             Location loc1 = new Location(loc.getTitle());
@@ -161,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         map.moveCamera(CameraUpdateFactory.zoomTo(17));
         map.moveCamera(CameraUpdateFactory.newLatLng(n));
-
+        Toast.makeText(this, "Location changed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
